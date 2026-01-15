@@ -1,5 +1,5 @@
 import './App.css';
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import Task from "./components/Task.tsx";
 
 const App = () => {
@@ -7,20 +7,25 @@ const App = () => {
 
     console.log(`App rendered`)
 
-    const deleteTask = (index: number) => {
-        const newTasks = [...tasks];
-        newTasks.splice(index, 1);
-        setTasks(newTasks);
-    }
+    const deleteTask = useMemo(() => (index: number) => {
+        setTasks(prev => {
+            const newTasks = [...prev];
+            newTasks.splice(index, 1);
+            return newTasks;
+        });
+    }, []);
 
-    const ediTask = (index: number, text: string) => {
-        const newTasks = [...tasks];
-        newTasks[index] = text;
-        setTasks(newTasks);
-    }
+    const ediTask = useMemo(() => (index: number, text: string) => {
+        setTasks(prev => {
+            const newTasks = [...prev];
+            newTasks[index] = text;
+            return newTasks;
+        });
+    }, []);
+
 
     const addTask = () => {
-        setTasks([...tasks, 'New task']);
+        setTasks(prev => [...prev, 'New task']);
     }
 
     return (

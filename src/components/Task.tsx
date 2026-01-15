@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {memo, useRef, useState} from "react";
 
 interface Props {
     children: string,
@@ -44,4 +44,4 @@ const Task = ({children, index, remove, edit}: Props) => {
     }
 }
 
-export default Task;
+export default memo(Task);
