@@ -1,39 +1,44 @@
 import './App.css';
-import {useMemo, useState} from "react";
+import { useCallback, useState } from "react";
 import Task from "./components/Task.tsx";
 
+interface TaskType {
+    id: number;
+    text: string;
+}
+
+let taskId = 0;
+
 const App = () => {
-    const [tasks, setTasks] = useState<string[]>([]);
+    const [tasks, setTasks] = useState<TaskType[]>([]);
 
-    console.log(`App rendered`)
-
-    const deleteTask = useMemo(() => (index: number) => {
-        setTasks(prev => {
-            const newTasks = [...prev];
-            newTasks.splice(index, 1);
-            return newTasks;
-        });
+    const deleteTask = useCallback((id: number) => {
+        setTasks(prev => prev.filter(task => task.id !== id));
     }, []);
 
-    const ediTask = useMemo(() => (index: number, text: string) => {
-        setTasks(prev => {
-            const newTasks = [...prev];
-            newTasks[index] = text;
-            return newTasks;
-        });
+    const editTask = useCallback((id: number, text: string) => {
+        setTasks(prev => prev.map(task => task.id === id ? { ...task, text } : task));
     }, []);
-
 
     const addTask = () => {
-        setTasks(prev => [...prev, 'New task']);
+        setTasks(prev => [...prev, { id: taskId++, text: 'New task' }]);
     }
 
     return (
-        <div className={'field'}>
-            <button onClick={addTask} className={'btn new'}>Add task</button>
-            {tasks.map((t, i) => <Task key={i + 1} index={i} remove={deleteTask} edit={ediTask}>{t}</Task>)}
+        <div className='field'>
+            <button onClick={addTask} className='btn new'>Add task</button>
+            {tasks.map((task, index) => (
+                <Task
+                    key={task.id}
+                    id={task.id}
+                    index={index}
+                    text={task.text}
+                    remove={deleteTask}
+                    edit={editTask}
+                />
+            ))}
         </div>
-    )
+    );
 }
 
-export default App
+export default App;

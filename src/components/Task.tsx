@@ -1,47 +1,42 @@
-import {memo, useRef, useState} from "react";
+import { memo, useRef, useState } from "react";
 
 interface Props {
-    children: string,
-    index: number,
-    remove: (index: number) => void,
-    edit: (index: number, text: string) => void
+    id: number;
+    index: number;
+    text: string;
+    remove: (id: number) => void;
+    edit: (id: number, text: string) => void;
 }
 
-const Task = ({children, index, remove, edit}: Props) => {
+const Task = ({ id, index, text, remove, edit }: Props) => {
     const [isEditing, setIsEditing] = useState(false);
-    const textId = useRef<HTMLTextAreaElement>(null);
+    const textRef = useRef<HTMLTextAreaElement>(null);
 
-    console.log(`Task rendered: ${children}, index: ${index}`)
+    console.log(`Task rendered: ${text}, index: ${index}`);
 
-    const handleClickEdit = () => {
-        setIsEditing(true);
-    }
-
-    const handleClickRemove = () => {
-        remove(index);
-    }
-
-    const handleClickSave = () => {
-        edit(index, textId.current!.value);
+    const handleEdit = () => setIsEditing(true);
+    const handleRemove = () => remove(id);
+    const handleSave = () => {
+        edit(id, textRef.current!.value);
         setIsEditing(false);
     }
 
     if (isEditing) {
         return (
-            <div className={'box'}>
-                <textarea ref={textId} defaultValue={children}></textarea>
-                <button onClick={handleClickSave} className={'btn  success'}>Save</button>
+            <div className="box">
+                <textarea ref={textRef} defaultValue={text}></textarea>
+                <button onClick={handleSave} className="btn success">Save</button>
             </div>
-        )
-    } else {
-        return (
-            <div className={'box'}>
-                <div>{children}</div>
-                <button onClick={handleClickEdit} className={'btn light'}>Edit</button>
-                <button onClick={handleClickRemove} className={'btn red'}>Remove</button>
-            </div>
-        )
+        );
     }
+
+    return (
+        <div className="box">
+            <div>{text}</div>
+            <button onClick={handleEdit} className="btn light">Edit</button>
+            <button onClick={handleRemove} className="btn red">Remove</button>
+        </div>
+    );
 }
 
 export default memo(Task);
